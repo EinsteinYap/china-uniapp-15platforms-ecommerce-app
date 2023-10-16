@@ -19,10 +19,13 @@
 		</view>
 		
 	</scroll-view>
-	<swiper :duration="150" :current="tabIndex" :style="'height:'+scrollH+'px;'"
-	 @change="onChangeTab">
+	<swiper :duration="150" 
+	:current="tabIndex" 
+	:style="'height:'+scrollH+'px;'"
+	 @change="onChangeTab"
+	 >
 		<swiper-item v-for="(item,index) in newsitems" :key="index">
-			<scroll-view scroll-y="true" :style="'height:'+scrollH+'px;'">  <!-- if not height, unable to scroll -->
+			<scroll-view scroll-y="true" :style="'height:'+scrollH+'px;'" @scrolltolower="loadmore(index)">  <!-- if not height, unable to scroll -->
 			<block v-for="(list,listIndex) in item.list" :key="listIndex">
 			<!-- 轮播图组件 -->
 			<swiper-image v-if="list.type ==='swiper'" :resdata="list.data" />
@@ -48,10 +51,15 @@
 				<common-list :item="item2" :index="index2"></common-list>
 					
 				</block>
-			
 				
 			</view>
 			</block>
+			
+			<!-- 上拉加载更多 -->
+			<divider />
+			<view class ="d-flex a-center j-center text-light-muted font-md py-3">
+				{{item.loadtext}}
+			</view>
 			</scroll-view>
 		</swiper-item>
 	</swiper>
@@ -62,6 +70,215 @@
 </template>
 
 <script>
+	
+	let demoTabBars = [
+		{
+			name:"推存"
+		},
+		{
+			name:"关注"
+		},
+		{
+			name:"体育"
+		},
+		{
+			name:"热点"
+		},
+		{
+			name:"财经",
+		},
+		{
+			name:"娱乐"
+		},
+		{
+			name:"军事",
+		},
+		{
+			name:"历史"
+		},
+		{
+			name:"本地"
+		}
+	];
+	
+	let demo1 = [
+		{
+			type:"swiper",
+			data:[
+				{
+					src:"../../static/images/demo/cate_banner.png"
+				},
+				{
+					src:"../../static/images/demo/search-banner.png"
+				},
+				{
+					src:"../../static/images/demo/cate_banner.png"
+				}
+			]
+		},
+		{
+			type:"indexNavs",
+			data:[
+				{
+					src:"../../static/images/indexnav/1.png",
+					text:"新品发布"
+				},
+				{
+					src:"../../static/images/indexnav/2.gif",
+					text:"小米众筹"
+				},
+				{
+					src:"../../static/images/indexnav/3.gif",
+					text:"以旧换新"
+				},
+				{
+					src:"../../static/images/indexnav/4.gif",
+					text:"一份换团"
+				},
+				{
+					src:"../../static/images/indexnav/5.gif",
+					text:"超值特卖"
+				},
+				{
+					src:"../../static/images/indexnav/6.gif",
+					text:"小米秒杀"
+				},
+				{
+					src:"../../static/images/indexnav/7.gif",
+					text:"真心想要"
+				},
+				{
+					src:"../../static/images/indexnav/8.gif",
+					text:"电视热卖"
+				},
+				{
+					src:"../../static/images/indexnav/9.gif",
+					text:"家电热卖"
+				},
+				{
+					src:"../../static/images/indexnav/10.gif",
+					text:"米粉卡"
+				}
+			]
+		},
+		{
+			type:"threeAdv",
+			data:{
+				big:{
+					src:"/static/images/demo/demo1.jpg"
+				},
+				smalltop:{
+					src:"/static/images/demo/demo2.jpg"
+				},
+				smallbotom:{
+					src:"/static/images/demo/demo3.jpg"
+				}
+			}
+		},
+		{
+			type:"list",
+			data:[
+			{
+				cover:"/static/images/demo/list/1.jpg",
+				title:"米家空调",
+				desc:"1.5匹变率",
+				oprice:2699,
+				pprice:3999
+				
+			},
+			{
+				cover:"/static/images/demo/list/2.jpg",
+				title:"黄家空调",
+				desc:"1.5匹变率",
+				oprice:6699,
+				pprice:4399
+				
+			},
+			{
+				cover:"/static/images/demo/list/3.jpg",
+				title:"李家空调",
+				desc:"1.5匹变率",
+				oprice:7699,
+				pprice:5399
+				
+			},
+			{
+				cover:"/static/images/demo/list/4.jpg",
+				title:"叶家空调",
+				desc:"1.5匹变率",
+				oprice:8699,
+				pprice:7399
+				
+			}
+			]
+		}
+	];
+	
+	let demo2 =[
+		{
+			type:"swiper",
+			data:[
+				{
+					src:"../../static/images/demo/cate_banner.png"
+				},
+				{
+					src:"../../static/images/demo/search-banner.png"
+				},
+				{
+					src:"../../static/images/demo/cate_banner.png"
+				}
+			]
+		},
+		{
+			type:"indexNavs",
+			data:[
+				{
+					src:"../../static/images/indexnav/1.png",
+					text:"新品发布"
+				},
+				{
+					src:"../../static/images/indexnav/2.gif",
+					text:"小米众筹"
+				},
+				{
+					src:"../../static/images/indexnav/3.gif",
+					text:"以旧换新"
+				},
+				{
+					src:"../../static/images/indexnav/4.gif",
+					text:"一份换团"
+				},
+				{
+					src:"../../static/images/indexnav/5.gif",
+					text:"超值特卖"
+				},
+									
+			]
+		},
+		{
+			type:"list",
+			data:[
+			
+			{
+				cover:"/static/images/demo/list/3.jpg",
+				title:"李家空调",
+				desc:"1.5匹变率",
+				oprice:7699,
+				pprice:5399
+				
+			},
+			{
+				cover:"/static/images/demo/list/4.jpg",
+				title:"叶家空调",
+				desc:"1.5匹变率",
+				oprice:8699,
+				pprice:7399
+				
+			}
+			]
+		}
+	]
+	
 	import swiperImage from "@/components/index/swiper-image.vue";
 	import indexNav from "@/components/index/index-nav";
 	import threeAdv from "@/components/index/three-adv";
@@ -80,247 +297,8 @@
 				scrollinto:"",
 				scrollH:500,
 				tabIndex:0,
-				tabBars:[
-				{
-					name:"推存"
-				},
-				{
-					name:"关注"
-				},
-				{
-					name:"体育"
-				},
-				{
-					name:"热点"
-				},
-				{
-					name:"财经",
-				},
-				{
-					name:"娱乐"
-				},
-				{
-					name:"军事",
-				},
-				{
-					name:"历史"
-				},
-				{
-					name:"本地"
-				}
-				],
-				newsitems:[
-					{
-						name:"推存",
-						list:[
-							{
-								type:"swiper",
-								data:[
-									{
-										src:"../../static/images/demo/cate_banner.png"
-									},
-									{
-										src:"../../static/images/demo/search-banner.png"
-									},
-									{
-										src:"../../static/images/demo/cate_banner.png"
-									}
-								]
-							},
-							{
-								type:"indexNavs",
-								data:[
-									{
-										src:"../../static/images/indexnav/1.png",
-										text:"新品发布"
-									},
-									{
-										src:"../../static/images/indexnav/2.gif",
-										text:"小米众筹"
-									},
-									{
-										src:"../../static/images/indexnav/3.gif",
-										text:"以旧换新"
-									},
-									{
-										src:"../../static/images/indexnav/4.gif",
-										text:"一份换团"
-									},
-									{
-										src:"../../static/images/indexnav/5.gif",
-										text:"超值特卖"
-									},
-									{
-										src:"../../static/images/indexnav/6.gif",
-										text:"小米秒杀"
-									},
-									{
-										src:"../../static/images/indexnav/7.gif",
-										text:"真心想要"
-									},
-									{
-										src:"../../static/images/indexnav/8.gif",
-										text:"电视热卖"
-									},
-									{
-										src:"../../static/images/indexnav/9.gif",
-										text:"家电热卖"
-									},
-									{
-										src:"../../static/images/indexnav/10.gif",
-										text:"米粉卡"
-									}
-								]
-							},
-							{
-								type:"threeAdv",
-								data:{
-									big:{
-										src:"/static/images/demo/demo1.jpg"
-									},
-									smalltop:{
-										src:"/static/images/demo/demo2.jpg"
-									},
-									smallbotom:{
-										src:"/static/images/demo/demo3.jpg"
-									}
-								}
-							},
-							{
-								type:"list",
-								data:[
-								{
-									cover:"/static/images/demo/list/1.jpg",
-									title:"米家空调",
-									desc:"1.5匹变率",
-									oprice:2699,
-									pprice:3999
-									
-								},
-								{
-									cover:"/static/images/demo/list/2.jpg",
-									title:"黄家空调",
-									desc:"1.5匹变率",
-									oprice:6699,
-									pprice:4399
-									
-								},
-								{
-									cover:"/static/images/demo/list/3.jpg",
-									title:"李家空调",
-									desc:"1.5匹变率",
-									oprice:7699,
-									pprice:5399
-									
-								},
-								{
-									cover:"/static/images/demo/list/4.jpg",
-									title:"叶家空调",
-									desc:"1.5匹变率",
-									oprice:8699,
-									pprice:7399
-									
-								}
-								]
-							}
-						]
-					},
-					{
-						name:"关注",
-						list:[
-								{
-									type:"swiper",
-									data:[
-										{
-											src:"../../static/images/demo/cate_banner.png"
-										},
-										{
-											src:"../../static/images/demo/search-banner.png"
-										},
-										{
-											src:"../../static/images/demo/cate_banner.png"
-										}
-									]
-								},
-								{
-									type:"indexNavs",
-									data:[
-										{
-											src:"../../static/images/indexnav/1.png",
-											text:"新品发布"
-										},
-										{
-											src:"../../static/images/indexnav/2.gif",
-											text:"小米众筹"
-										},
-										{
-											src:"../../static/images/indexnav/3.gif",
-											text:"以旧换新"
-										},
-										{
-											src:"../../static/images/indexnav/4.gif",
-											text:"一份换团"
-										},
-										{
-											src:"../../static/images/indexnav/5.gif",
-											text:"超值特卖"
-										},
-							
-									]
-								},
-								{
-									type:"list",
-									data:[
-									
-									{
-										cover:"/static/images/demo/list/3.jpg",
-										title:"李家空调",
-										desc:"1.5匹变率",
-										oprice:7699,
-										pprice:5399
-										
-									},
-									{
-										cover:"/static/images/demo/list/4.jpg",
-										title:"叶家空调",
-										desc:"1.5匹变率",
-										oprice:8699,
-										pprice:7399
-										
-									}
-									]
-								}
-							]
-						},
-					{
-						name:"体育",
-						list:[]
-					},
-					{
-						name:"热点",
-						list:[]
-					},
-					{
-						name:"财经",
-						list:[]
-					},
-					{
-						name:"娱乐",
-						list:[]
-					},
-					{
-						name:"军事",
-						list:[]
-					},
-					{
-						name:"历史",
-						list:[]
-					},
-					{
-						name:"本地",
-						list:[]
-					}
-				]
+				tabBars:[],
+				newsitems:[]
 			}
 		},
 		onLoad() {
@@ -330,8 +308,29 @@
 			this.scrollH = res.windowHeight - uni.upx2px(82)
 			}
 		})
+		// 初始化事件
+		this.__init()
 		},
 		methods: {
+		// 初始化事件
+		__init(){
+			this.tabBars = demoTabBars
+			
+			let arr =[]
+			for(var i=0 ; i<this.tabBars.length;i++){
+				let obj = {
+					list:[],
+					loadtext:"上拉加载更多"
+				}
+				
+				//获取首屏数据
+				if(i===0){
+					obj.list = demo1
+				}
+				arr.push(obj)
+			}
+			this.newsitems = arr
+		},
 		changeTab(index){
 			//切换选项
 			if(this.tabIndex ===index){
@@ -339,12 +338,34 @@
 			}
 			this.tabIndex= index	
 			this.scrollinto ='tab' +index
+			this.addData()
 		},
 		onChangeTab(e){
 			//监听滑动列表
 			this.tabIndex = e.detail.current
+		},
+		//加载数据
+		addData(){
+			let index = this.tabIndex
+			this.newsitems[index].list = demo2
+		},
+		loadmore(index){
+			//是否处于可加载状态
+			let item = this.newsitems[index]
+			if(item.loadtext !== '上拉加载更多')
+				return;
+				//模拟加载
+				item.loadtext = '加载中...'
+				setTimeout(()=>{
+					//加载数据
+					item.list = [...item.list,...demo2];
+					//回复状态
+					item.loadtext ='上拉加载更多'
+				},2000)
 		}
-		}
+			
+		
+	}
 	}
 </script>
 

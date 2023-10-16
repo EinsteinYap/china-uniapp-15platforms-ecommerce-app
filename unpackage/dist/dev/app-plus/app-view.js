@@ -322,6 +322,11 @@ var render = function () {
                 {
                   style: _vm._$g("6-" + $31, "s"),
                   attrs: { "scroll-y": "true", _i: "6-" + $31 },
+                  on: {
+                    scrolltolower: function ($event) {
+                      return _vm.$handleViewEvent($event)
+                    },
+                  },
                 },
                 [
                   _vm._l(
@@ -385,6 +390,15 @@ var render = function () {
                           : _vm._e(),
                       ]
                     }
+                  ),
+                  _c("divider", { attrs: { _i: "18-" + $31 } }),
+                  _c(
+                    "uni-view",
+                    {
+                      staticClass: _vm._$g("19-" + $31, "sc"),
+                      attrs: { _i: "19-" + $31 },
+                    },
+                    [_vm._v(_vm._$g("19-" + $31, "t0-0"))]
                   ),
                 ],
                 2
